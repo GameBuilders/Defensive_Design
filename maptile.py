@@ -30,7 +30,7 @@ class Tile:
             self.type = PATH
         elif(character == "S"):
             self.type = START
-        elif(character == "D"):
+        elif(character == "E"):
              self.type = DESTINATION
         else:
             self.type = PLOT # By default we can build towers on it
@@ -61,6 +61,8 @@ class Tile:
         # Add the sprite to the sprite group
         group.add(self.sprite)
         
+    def isPlot(self):
+	return self.type == PLOT
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':
     execfile("main.py")

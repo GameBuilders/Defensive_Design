@@ -9,12 +9,16 @@ import os
 import gamedata
 import userinterface
 import enemymanager
+import towermanager
+import time
+import soundmanager
+import selectionbar
 
 """
 The dimensions for the screen. These should remain constant.
 """
 SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 800
+SCREEN_HEIGHT = 900
 
 """
 The max number of frames per second for the game.
@@ -29,7 +33,7 @@ GameClock = None
 """
 The title of the game. This should remain constant.
 """
-TITLE = "Defensive Design"
+TITLE = "Attack of the Triangles"
 
 """
 This performs initial setup of the game. Any global variables
@@ -54,12 +58,29 @@ def setup():
     Map = gamemap.GameMap("map1", ScreenSurface)
     # Initialize the enemy manager
     global EnemyManager
-    EnemyManager = enemymanager.EnemyManager(Map.getTileSize())
+    EnemyManager = enemymanager.EnemyManager(Map.getTileSize(), 15)
+    # initialize the tower manager
+    global TowerManager
+    TowerManager = towermanager.TowerManager(Map.getTileSize())
+    # start mixer, load song
+    global SoundManager
+    SoundManager = soundmanager.SoundManager()
     global GameClock
     GameClock = pygame.time.Clock()
     global GameState
     GameState = True
+    global SelectionBar
+    SelectionBar = selectionbar.SelectionBar(Map.getTileSize())
+    global selectedTower
+    selectedTower = None
 
+
+"""
+Makes a new map
+"""
+def makeMap(nextMap):
+    global Map
+    Map = gamemap.GameMap("map" + str(nextMap), ScreenSurface)
 """
 This handles a single pygame event.
 """
@@ -70,8 +91,22 @@ def handleEvent(event):
         # Quit the program safely
         pygame.quit()
         sys.exit()
+    if(event.type == pygame.MOUSEBUTTONDOWN):
+	handleMouseEvent(event)
     else:
         EnemyManager.spawnEnemy(event, Map.getStartingTile())
+
+def handleMouseEvent(event):
+    e = SelectionBar.handleMouseEvent(event)
+    global selectedTower
+    if(e == -1 and event.pos[1] < 800 and selectedTower != None):
+        (mapX, mapY) = Map.getTileCoordinates(event.pos)
+	if(not(Map.tiles[mapX][mapY].isPlot()) or Data.resources < SelectionBar.prices[selectedTower]):
+	    return
+	Data.lose(SelectionBar.prices[selectedTower])
+	TowerManager.addNewTower(selectedTower, (mapX, mapY))
+    else:
+	selectedTower = e;
 
 """
 This is the main game loop, called as many times as
@@ -103,15 +138,28 @@ def update():
     global GameState
     if(GameState):
         # Update the enemies
-        livesLost = EnemyManager.update(Map)
-        Data.lives -= livesLost
+        val = EnemyManager.update(Map)
+        Data.lives -= val[0]
+	Data.earn(val[1])
+        # Update the Towers
+        TowerManager.update(EnemyManager.enemies)
         # Update the UI
         UI.update(Data)
         # Check if the game is over
         if(Data.lives <= 0):
             GameState = False # The game is over
             UI.showDefeat()
-       
+	if(EnemyManager.isFinished()):
+       	    UI.hasWon = True
+            UI.draw(ScreenSurface)
+            pygame.display.flip()
+            TowerManager.endLevel()
+            time.sleep(5)
+            UI.hasWon = False
+	    Data.mapNumber += 1
+	    EnemyManager.newLevel()
+	    makeMap(Data.mapNumber)
+    
 
 """
 Draws all game objects to the screen. This is called once
@@ -122,8 +170,12 @@ def draw():
     Map.draw(ScreenSurface)
     # Draw the enemies
     EnemyManager.draw(ScreenSurface)
+    # Draw the towers
+    TowerManager.drawSprites(ScreenSurface)
+    TowerManager.drawAttacks(ScreenSurface)
     # Draw the UI
     UI.draw(ScreenSurface)
+    SelectionBar.draw(ScreenSurface)
     
 
 """

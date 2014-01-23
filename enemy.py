@@ -8,7 +8,7 @@ import Queue
 import maptile
 
 DEFAULT_HEALTH = 100
-DEFAULT_SPEED = 0.1 # This is in number of pixels per second
+DEFAULT_SPEED = 0.2 # This is in number of pixels per second
 
 # The cardinal directions, used in pathfinding.
 DIRECTION_NORTH = 1
@@ -37,7 +37,7 @@ class Enemy:
     Initializes a new enemy at the given x and y coordinates.
     This also adds the enemy's sprite to the given sprite group.
     """
-    def __init__(self, x, y, group, size):
+    def __init__(self, x, y, group, size, wave):
         if(not Enemy.initialized): # Load the images
             Enemy.up_image = pygame.image.load(os.path.join("images", "enemy_up.png"))
             Enemy.up_image = pygame.transform.scale(Enemy.up_image, size)
@@ -48,7 +48,7 @@ class Enemy:
             Enemy.right_image = pygame.image.load(os.path.join("images", "enemy_right.png"))
             Enemy.right_image = pygame.transform.scale(Enemy.right_image, size)
             Enemy.initialized = True
-        self.health = DEFAULT_HEALTH
+        self.health = DEFAULT_HEALTH + wave*10
         self.speed = DEFAULT_SPEED
         self.sprite = pygame.sprite.Sprite()
         self.direction = DIRECTION_NONE
@@ -56,6 +56,9 @@ class Enemy:
         self.size = size
         self.sprite.rect = pygame.Rect(x, y, size[0], size[1])
         group.add(self.sprite)
+
+    def takeDamage(self, damage):
+	self.health -= damage
 
     """
     Update the sprite. The time_elapsed parameter is how much time
@@ -104,7 +107,7 @@ class Enemy:
             # Find the tile below this one
             if(mapdata.validCoordinates(tile_coord[0], tile_coord[1]+1)):
                 tile = mapdata.tiles[tile_coord[0]][tile_coord[1]+1]
-                if(coordinates[1]+self.size[1] >= tile.y*mapdata.tileheight):
+                if(coordinates[1]+self.size[1] <= tile.y*mapdata.tileheight):
                     return True
             return False
         elif(self.direction == DIRECTION_SOUTH):
