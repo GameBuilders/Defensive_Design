@@ -573,6 +573,7 @@ def step():
 
     for x in range(0, 20 - 1):
         for y in range(0, 20 - 1):
+            print(str(x) + ", " + str(y))
             tile = Map.tiles[x][y]
             if (tile.tower.t == 2 or tile.tower.t == 3 or tile.tower.t == 4):
                 energyCost = 1

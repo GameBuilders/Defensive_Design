@@ -77,7 +77,6 @@ class GameMap:
         for x in range(0, WIDTH - 1):
             for y in range(0, HEIGHT - 1):
                 tile = self.tiles[x][y]
-                if (tile.burn > 3): tile.burn = 3
                 surface.blit(self.IMAGE, (x * 32, y * 32, 32, 32), ((tile.type % 8) * 32, ((tile.type / 8) + tile.burn) * 32, 32, 32))
         #self.spritegroup.draw(surface)
 

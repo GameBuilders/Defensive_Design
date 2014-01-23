@@ -1,0 +1,52 @@
+
+HOW TO PLAY CAT-ASTROPHE
+
+MOVEMENT:
+    It is turned based. enemies move when you move.
+    There are two control systems that allow full eight directional movement:
+        NUMPAD:
+         7 8 9
+         4   6
+         1 2 3
+    
+        UIOJKL:
+         7 8 9
+         U   P
+         J K L
+
+    You can press numpad 5 or I (the center of the control squares) to skip a turn.
+    You can walk on money to pick it up.
+    You can walk into enemies to hurt them (one damage).
+
+BUILDING:
+    You press space to unlock the build circle. You can press space to cancel it as well.
+    When you press a direction while the build circle is up, you build a tower (if you have enough money, it costs 4 coins).
+    LASERS are built ORTHOGONALLY.
+    GENERATORS are built DIAGONALLY.
+
+UPGRADING:
+    If while building, the direction you press has a tower, you get to the upgrade circle instead.
+    Entering this menu costs a turn, so a complete upgrade takes two turns.
+    Pressing UP on the upgrade circle makes the tower a SUPER tower. SUPER towers generate more or do more damage, and can attack (for less damage) even when lacking energy. SUPER towers cost 6 coins.
+    Pressing DOWN on the upgrade circle destroys the tower. This is not an upgrade. You only get two coins back.
+    Pressing LEFT or RIGHT upgrades the tower to a special tower.
+
+TOWERS:
+    Lasers shoot the enemies and generators provide power to the generators.
+    All towers can be pushed by walking into them. If an enemy walks over a tower it will destroy it.
+
+        PURPLE LASER: The base laser tower. It attacks enemies adjacent to it.
+        RED LASER: The right upgrade special tower. It costs 4 coins. It can attack all enemies adjacent to it at once, but requires more energy.
+        BLUE LASER: The left upgrade special tower. It costs 3 coins. It has a longer range than the other lasers.
+
+        GRASS FURNACE: The base generator. It turns nearby grass into energy for towers. It can charge towers up to two squares away.
+        SOLAR FURNACE: The right upgrade special tower. It costs 6 coins. It charges at a constant rate and requires no grass or souls. It can only charge towers up to one square away.
+        SOUL FURNACE: The left upgrade special tower. It costs only one coin. When an enemy dies near it, it converts the soul to power and can charge towers up to two squares away.
+
+ENEMIES:
+    The cats are your enemies. If eight reach your flag you lose the game.
+    PIRATE CATS can move at double speed
+    SWAMP CATS absorb energy from adjacent towers.
+    ROBOT CATS shrug off one point of damage on every attack. Only SUPER towers can hurt them.
+    MEGA CATS have lots of health.
+    SPECTRE CATS are fast AND absorb energy AND have as much health as MEGA cats.
