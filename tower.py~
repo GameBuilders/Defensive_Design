@@ -37,13 +37,13 @@ class towerEnemy:
 	self.speed = SPEED[1]
 	self.direction = DIRECTION[3] #start right
 	self.velocity = [self.speed * self.direction[0], self.speed * self.direction[1]]
-        if(not towerEnemy.initialized): # Load the images
-            towerEnemy.enemy_image = pygame.image.load(os.path.join("images", "Turret_1.png"))
-            towerEnemy.enemy_image = pygame.transform.smoothscale(towerEnemy.enemy_image, self.size)
-            towerEnemy.initialized = True
+        if(not squareEnemy.initialized): # Load the images
+            squareEnemy.enemy_image = pygame.image.load(os.path.join("images", "Turret_1.png"))
+            squareEnemy.enemy_image = pygame.transform.smoothscale(squareEnemy.enemy_image, self.size)
+            squareEnemy.initialized = True
         self.health = HEALTH
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = towerEnemy.enemy_image
+        self.sprite.image = squareEnemy.enemy_image
         self.sprite.rect = pygame.Rect(x, y, self.size[0], self.size[1])
         group.add(self.sprite)
 

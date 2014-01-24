@@ -38,7 +38,7 @@ class Enemy:
     This also adds the enemy's sprite to the given sprite group.
     """
     def __init__(self, x, y, group, size):
-	size = (20, 20)
+	size = (40, 40)
         if(not Enemy.initialized): # Load the images
             Enemy.up_image = pygame.image.load(os.path.join("images", "Square_Red.png"))
             Enemy.up_image = pygame.transform.smoothscale(Enemy.up_image, size)

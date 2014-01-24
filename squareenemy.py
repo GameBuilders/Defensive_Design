@@ -9,12 +9,12 @@ import maptile
 import random
 
 HEALTH = 100
-SIZE = [100,100,100,100]
-SPEED = [0,0,0,0] # This is in number of pixels per second
+SIZE = [20,40,60,80]
+SPEED = [.08, .06, .02, .01] # This is in number of pixels per second
 DIRECTION = [[0,-1],[0,1],[-1,0],[1,0]] #up, down, left, right
 
 
-class towerEnemy:
+class squareEnemy:
 
     """
     Set to true if the images have been initialized already.
@@ -37,13 +37,13 @@ class towerEnemy:
 	self.speed = SPEED[1]
 	self.direction = DIRECTION[3] #start right
 	self.velocity = [self.speed * self.direction[0], self.speed * self.direction[1]]
-        if(not towerEnemy.initialized): # Load the images
-            towerEnemy.enemy_image = pygame.image.load(os.path.join("images", "Turret_1.png"))
-            towerEnemy.enemy_image = pygame.transform.smoothscale(towerEnemy.enemy_image, self.size)
-            towerEnemy.initialized = True
+        if(not squareEnemy.initialized): # Load the images
+            squareEnemy.enemy_image = pygame.image.load(os.path.join("images", "Square_Red.png"))
+            squareEnemy.enemy_image = pygame.transform.smoothscale(squareEnemy.enemy_image, self.size)
+            squareEnemy.initialized = True
         self.health = HEALTH
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = towerEnemy.enemy_image
+        self.sprite.image = squareEnemy.enemy_image
         self.sprite.rect = pygame.Rect(x, y, self.size[0], self.size[1])
         group.add(self.sprite)
 
@@ -53,7 +53,10 @@ class towerEnemy:
     parameter is a map object.
     """
     def update(self, time_elapsed, mapdata):
-
+	
+	curCenter = (self.sprite.rect.centerx,self.sprite.rect.centery)
+	if (curCenter[0] > 400 and curCenter[1] > 50 and curCenter[1] < 300 and curCenter[0] < 2000):
+		self.health = 0
         deltaY = 0
         deltaX = 0
         # Update depending on the current direction
@@ -69,7 +72,7 @@ class towerEnemy:
 	if(random.randrange(0,100) == 5):
 		randDirec = random.randrange(0,100)
         	if(randDirec < 5):            
-        		self.direction = DIRECTION[2]
+        		tangle = 1#self.direction = DIRECTION[2]
         	elif(randDirec < 25):            
         		self.direction = DIRECTION[0]
         	elif(randDirec < 45):            

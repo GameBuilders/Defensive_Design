@@ -45,9 +45,9 @@ class Tile:
             if(self.type == PATH):
                 name = "GridFloor_Green.png"
             elif(self.type == START):
-                name = "Node_Start_Green.png"
+                name = "start.png"
             elif(self.type == DESTINATION):
-                name = "Node_End_Green.png"
+                name = "end.png"
             else: # Buildable tile by default
                 name = "GridFloor_Red.png"
             # The os.path.join() function is used for cross platform compatibility

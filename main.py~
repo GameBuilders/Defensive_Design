@@ -31,7 +31,7 @@ GameClock = 0
 The title of the game. This should remain constant.
 """
 TITLE = "Defensive Design"
-
+turretNum = 0
 """
 This performs initial setup of the game. Any global variables
 should also be defined here (yes, I know most people say global
@@ -62,7 +62,7 @@ def setup():
     GameState = True
     pygame.mixer.music.load('Ominulous.ogg')
     pygame.mixer.music.play(-1)
-
+    turretNum = 0
 
 """
 This handles a single pygame event.
@@ -142,8 +142,8 @@ def handleKeyEvent(event):
             pygame.quit()
             sys.exit()
 	if(event.key == pygame.K_a):
-	    EnemyManager.createTower()
-
+	    EnemyManager.createTower(turretNum)
+	    turretNum += 1
     else:
         if(event.type == pygame.KEYUP):
             return # TODO: Add stuff for key up events here

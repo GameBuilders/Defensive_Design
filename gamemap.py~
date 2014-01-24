@@ -32,7 +32,7 @@ class GameMap:
         with open(os.path.join("Maps", mapname + ".txt"), "r") as file:
             self.numStarts = 0
             self.numDests = 0
-            self.start = [None, None, None, None]
+            self.start = [None, None, None]
             self.dest = [None, None]
             for index, line in enumerate(file):
                 # If this is the first line, we store it as numRows

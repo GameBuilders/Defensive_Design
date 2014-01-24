@@ -9,12 +9,12 @@ import maptile
 import random
 
 HEALTH = 100
-SIZE = [100,100,100,100]
-SPEED = [0,0,0,0] # This is in number of pixels per second
-DIRECTION = [[0,-1],[0,1],[-1,0],[1,0]] #up, down, left, right
+SIZE = [20,40,60,80]
+SPEED = [.08, .06, .02, .01] # This is in number of pixels per second
+DIRECTION = [[0,-1],[0,1],[-1,0],[1,0],[1,-1],[-1,-1],[1,1],[-1,1]] #up, down, left, right, ur, ul, dr, dl
 
 
-class towerEnemy:
+class octaEnemy:
 
     """
     Set to true if the images have been initialized already.
@@ -37,13 +37,13 @@ class towerEnemy:
 	self.speed = SPEED[1]
 	self.direction = DIRECTION[3] #start right
 	self.velocity = [self.speed * self.direction[0], self.speed * self.direction[1]]
-        if(not towerEnemy.initialized): # Load the images
-            towerEnemy.enemy_image = pygame.image.load(os.path.join("images", "Turret_1.png"))
-            towerEnemy.enemy_image = pygame.transform.smoothscale(towerEnemy.enemy_image, self.size)
-            towerEnemy.initialized = True
+        if(not octaEnemy.initialized): # Load the images
+            octaEnemy.enemy_image = pygame.image.load(os.path.join("images", "Octa_Red.png"))
+            octaEnemy.enemy_image = pygame.transform.smoothscale(octaEnemy.enemy_image, self.size)
+            octaEnemy.initialized = True
         self.health = HEALTH
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = towerEnemy.enemy_image
+        self.sprite.image = octaEnemy.enemy_image
         self.sprite.rect = pygame.Rect(x, y, self.size[0], self.size[1])
         group.add(self.sprite)
 
@@ -54,6 +54,9 @@ class towerEnemy:
     """
     def update(self, time_elapsed, mapdata):
 
+	curCenter = (self.sprite.rect.centerx,self.sprite.rect.centery)
+	if (curCenter[0] > 500 and curCenter[1] > 120 and curCenter[1] < 200 and curCenter[0] < 1000):
+		self.health = 0
         deltaY = 0
         deltaX = 0
         # Update depending on the current direction
@@ -69,11 +72,19 @@ class towerEnemy:
 	if(random.randrange(0,100) == 5):
 		randDirec = random.randrange(0,100)
         	if(randDirec < 5):            
-        		self.direction = DIRECTION[2]
+        		self.direction = DIRECTION[4]
+        	elif(randDirec < 15):            
+        		self.direction = DIRECTION[6]
         	elif(randDirec < 25):            
-        		self.direction = DIRECTION[0]
-        	elif(randDirec < 45):            
-        		self.direction = DIRECTION[1]
+        		shrunk = 1#self.direction = DIRECTION[2]
+        	elif(randDirec < 60):            
+        		self.direction = DIRECTION[3]
+        	elif(randDirec < 70):            
+        		self.direction = DIRECTION[3]
+        	elif(randDirec < 80):            
+        		self.direction = DIRECTION[4]
+        	elif(randDirec < 90):            
+        		self.direction = DIRECTION[6]
         	else:            
         		self.direction = DIRECTION[3]
 		self.velocity = [self.speed * self.direction[0], self.speed * self.direction[1]]

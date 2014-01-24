@@ -4,7 +4,6 @@ screen.
 """
 
 import os
-import random
 
 """
 The size of the font to use in the user interface
@@ -43,8 +42,8 @@ class UserInterface:
         self.gamestate = True # The game is running
 
     def update(self, gamedata):
-        # We save a surface containing the text we want to show. gamedata.score
-        self.score = self.font.render("Score: " + str(random.randrange(0, 3)),
+        # We save a surface containing the text we want to show.
+        self.score = self.font.render("Score: " + str(gamedata.score),
                                       True, FONT_COLOR, FONT_BACKGROUND)
         self.lives = self.font.render("Lives: " + str(gamedata.lives),
                                       True, FONT_COLOR, FONT_BACKGROUND)

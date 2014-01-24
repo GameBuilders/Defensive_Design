@@ -127,7 +127,7 @@ class EnemyManager:
         EnemyManager.spritegroup.draw(surface)
 
     def createTower(self):
-	EnemyManager.enemies.append(tower.towerEnemy(520 + (self.turretNum*90), 174, EnemyManager.spritegroup, self.size))
+	EnemyManager.enemies.append(tower.towerEnemy(520 + (self.turretNum*80), 174, EnemyManager.spritegroup, self.size))
 	self.turretNum += 1
 
     """
