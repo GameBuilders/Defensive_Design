@@ -43,13 +43,13 @@ class Tile:
             self.sprite = pygame.sprite.Sprite(group)
             name = None # The name of the image to use
             if(self.type == PATH):
-                name = "path.png"
+                name = "dirt_tile.png"
             elif(self.type == START):
-                name = "start.png"
+                name = "ant_hill.png"
             elif(self.type == DESTINATION):
-                name = "end.png"
+                name = "picnic_tile.png"
             else: # Buildable tile by default
-                name = "plot.png"
+                name = "grass_tile.png"
             # The os.path.join() function is used for cross platform compatibility
             self.sprite.image = pygame.image.load(os.path.join("images", name))
             self.sprite.image = pygame.transform.scale(self.sprite.image, size)

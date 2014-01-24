@@ -7,8 +7,10 @@ import os
 import Queue
 import maptile
 
+resources = 0
+
 DEFAULT_HEALTH = 100
-DEFAULT_SPEED = 0.1 # This is in number of pixels per second
+DEFAULT_SPEED = 0.2 # This is in number of pixels per second
 
 # The cardinal directions, used in pathfinding.
 DIRECTION_NORTH = 1
@@ -37,19 +39,64 @@ class Enemy:
     Initializes a new enemy at the given x and y coordinates.
     This also adds the enemy's sprite to the given sprite group.
     """
-    def __init__(self, x, y, group, size):
-        if(not Enemy.initialized): # Load the images
-            Enemy.up_image = pygame.image.load(os.path.join("images", "enemy_up.png"))
+    def __init__(self, x, y, group, size, species):
+	if(not Enemy.initialized): # Load the images
+	    Enemy.up_image = pygame.image.load(os.path.join("images", "ant_up.png"))
+	    Enemy.down_image = pygame.image.load(os.path.join("images", "ant_down.png"))
+	    Enemy.left_image = pygame.image.load(os.path.join("images", "ant_left.png"))
+	    Enemy.right_image = pygame.image.load(os.path.join("images", "ant_right.png"))
+	    
+	    Enemy.re_up_image = pygame.image.load(os.path.join("images", "red_ant_up.png"))
+	    Enemy.re_down_image = pygame.image.load(os.path.join("images", "red_ant_down.png"))
+	    Enemy.re_left_image = pygame.image.load(os.path.join("images", "red_ant_left.png"))
+	    Enemy.re_right_image = pygame.image.load(os.path.join("images", "red_ant_right.png"))
+
+	    Enemy.q_up_image = pygame.image.load(os.path.join("images", "queen_ant_up.png"))
+	    Enemy.q_down_image = pygame.image.load(os.path.join("images", "queen_ant_down.png"))
+	    Enemy.q_left_image = pygame.image.load(os.path.join("images", "queen_ant_left.png"))
+	    Enemy.q_right_image = pygame.image.load(os.path.join("images", "queen_ant_right.png"))
+
+	    Enemy.r_up_image = pygame.image.load(os.path.join("images", "robot_ant_up.png"))
+	    Enemy.r_down_image = pygame.image.load(os.path.join("images", "robot_ant_down.png"))
+	    Enemy.r_left_image = pygame.image.load(os.path.join("images", "robot_ant_left.png"))
+	    Enemy.r_right_image = pygame.image.load(os.path.join("images", "robot_ant_right.png"))
+
             Enemy.up_image = pygame.transform.scale(Enemy.up_image, size)
-            Enemy.down_image = pygame.image.load(os.path.join("images", "enemy_down.png"))
             Enemy.down_image = pygame.transform.scale(Enemy.down_image, size)
-            Enemy.left_image = pygame.image.load(os.path.join("images", "enemy_left.png"))
             Enemy.left_image = pygame.transform.scale(Enemy.left_image, size)
-            Enemy.right_image = pygame.image.load(os.path.join("images", "enemy_right.png"))
             Enemy.right_image = pygame.transform.scale(Enemy.right_image, size)
+
+            Enemy.re_up_image = pygame.transform.scale(Enemy.re_up_image, size)
+            Enemy.re_down_image = pygame.transform.scale(Enemy.re_down_image, size)
+            Enemy.re_left_image = pygame.transform.scale(Enemy.re_left_image, size)
+            Enemy.re_right_image = pygame.transform.scale(Enemy.re_right_image, size)
+
+            Enemy.q_up_image = pygame.transform.scale(Enemy.q_up_image, size)
+            Enemy.q_down_image = pygame.transform.scale(Enemy.q_down_image, size)
+            Enemy.q_left_image = pygame.transform.scale(Enemy.q_left_image, size)
+            Enemy.q_right_image = pygame.transform.scale(Enemy.q_right_image, size)
+
+            Enemy.r_up_image = pygame.transform.scale(Enemy.r_up_image, size)
+            Enemy.r_down_image = pygame.transform.scale(Enemy.r_down_image, size)
+            Enemy.r_left_image = pygame.transform.scale(Enemy.r_left_image, size)
+            Enemy.r_right_image = pygame.transform.scale(Enemy.r_right_image, size)
+
             Enemy.initialized = True
-        self.health = DEFAULT_HEALTH
-        self.speed = DEFAULT_SPEED
+
+	if (species == 1): #red	        
+	    self.health = DEFAULT_HEALTH
+            self.speed = DEFAULT_SPEED*2
+	elif (species == 2): #queen
+	    self.health = DEFAULT_HEALTH*10
+            self.speed = DEFAULT_SPEED
+	elif (species == 3): #robo
+	    self.health = DEFAULT_HEALTH*5
+            self.speed = DEFAULT_SPEED*3
+	else: #standard  
+	    self.health = DEFAULT_HEALTH
+            self.speed = DEFAULT_SPEED
+	self.species = species
+	self.resource = 1
         self.sprite = pygame.sprite.Sprite()
         self.direction = DIRECTION_NONE
         self.sprite.image = Enemy.down_image
@@ -69,16 +116,48 @@ class Enemy:
         # Update depending on the current direction
         if(self.direction == DIRECTION_NORTH):
             deltaY = -self.speed*time_elapsed # Go up the screen
-            self.sprite.image = Enemy.up_image
+	    if (self.species == 1):
+	            self.sprite.image = Enemy.re_up_image
+	    elif (self.species == 2):
+	            self.sprite.image = Enemy.q_up_image
+	    elif (self.species == 3):
+	            self.sprite.image = Enemy.r_up_image
+	    else:
+		self.sprite.image = Enemy.up_image
+
         elif(self.direction == DIRECTION_SOUTH):
             deltaY = self.speed*time_elapsed
-            self.sprite.image = Enemy.down_image
+            if (self.species == 1):
+	            self.sprite.image = Enemy.re_down_image
+	    elif (self.species == 2):
+	            self.sprite.image = Enemy.q_down_image
+	    elif (self.species == 3):
+	            self.sprite.image = Enemy.r_down_image
+	    else:
+		self.sprite.image = Enemy.down_image
+
         elif(self.direction == DIRECTION_WEST):
             deltaX =-self.speed*time_elapsed
-            self.sprite.image = Enemy.left_image
+            if (self.species == 1):
+	            self.sprite.image = Enemy.re_left_image
+	    elif (self.species == 2):
+	            self.sprite.image = Enemy.q_left_image
+	    elif (self.species == 3):
+	            self.sprite.image = Enemy.r_left_image
+	    else:
+		self.sprite.image = Enemy.left_image
+
         elif(self.direction == DIRECTION_EAST):
             deltaX = self.speed*time_elapsed
-            self.sprite.image = Enemy.right_image
+	    if (self.species == 1):
+	            self.sprite.image = Enemy.re_right_image
+	    elif (self.species == 2):
+	            self.sprite.image = Enemy.q_right_image
+	    elif (self.species == 3):
+	            self.sprite.image = Enemy.r_right_image
+	    else:
+		self.sprite.image = Enemy.right_image
+
         # If the direction is NONE, do nothing
 
         # Update the coordinates and rectangle

@@ -13,7 +13,7 @@ import enemymanager
 """
 The dimensions for the screen. These should remain constant.
 """
-SCREEN_WIDTH = 800
+SCREEN_WIDTH = 1000
 SCREEN_HEIGHT = 800
 
 """
@@ -29,7 +29,7 @@ GameClock = None
 """
 The title of the game. This should remain constant.
 """
-TITLE = "Defensive Design"
+TITLE = "Picnic Panic"
 
 """
 This performs initial setup of the game. Any global variables
@@ -66,12 +66,15 @@ This handles a single pygame event.
 def handleEvent(event):
     if(event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
         handleKeyEvent(event)
+    if(event.type == pygame.MOUSEBUTTONDOWN or event.type == pygame.MOUSEBUTTONUP):
+        handleMouseEvent(event)
     if event.type == pygame.QUIT:
         # Quit the program safely
         pygame.quit()
         sys.exit()
     else:
         EnemyManager.spawnEnemy(event, Map.getStartingTile())
+	
 
 """
 This is the main game loop, called as many times as
@@ -103,8 +106,11 @@ def update():
     global GameState
     if(GameState):
         # Update the enemies
-        livesLost = EnemyManager.update(Map)
-        Data.lives -= livesLost
+        livesLost = EnemyManager.update(Map, Data.score)
+        Data.lives -= livesLost 
+        resources = EnemyManager.update(Map, Data.score)
+        Data.resources += resources
+	Data.score += resources
         # Update the UI
         UI.update(Data)
         # Check if the game is over
@@ -137,8 +143,25 @@ def handleKeyEvent(event):
         if(event.key == pygame.K_ESCAPE):
             pygame.quit()
             sys.exit()
+	if(event.key == pygame.K_b):
+		Data.resources -= EnemyManager.spawnSlowTower(Data.resources, Map)
+	if(event.key == pygame.K_a):
+		Data.resources -= EnemyManager.spawnSpreadTower(Data.resources, Map)
+	if(event.key == pygame.K_s):
+		Data.resources -= EnemyManager.speedUp(Data.resources, Map)
+	if(event.key == pygame.K_p):
+		Data.resources -= EnemyManager.powerUp(Data.resources, Map)
+
     else:
         if(event.type == pygame.KEYUP):
+            return # TODO: Add stuff for key up events here
+
+def handleMouseEvent(event):
+    if(event.type == pygame.MOUSEBUTTONDOWN):
+        # If a legal space has been selected, place a tower
+        Data.resources -= EnemyManager.spawnTower(Data.resources, Map)
+    else:
+        if(event.type == pygame.MOUSEBUTTONUP):
             return # TODO: Add stuff for key up events here
 
 pygame.init()

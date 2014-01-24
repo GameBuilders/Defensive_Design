@@ -87,7 +87,9 @@ class GameMap:
                 self.start.y*self.start.sprite.image.get_height())
 
     def getDestinationTile(self):
-        return (self.dest.x, self.dest.y)
+        return (self.dest.x*self.dest.sprite.image.get_width(),
+                self.dest.y*self.dest.sprite.image.get_height())
+
 
     def getTileSize(self):
         return (self.tilewidth, self.tileheight)
@@ -100,8 +102,27 @@ class GameMap:
     given coordinates.
     """
     def getTileCoordinates(self, coordinates):
-        return (int(floor(coordinates[0]/self.tilewidth)),
+        retval = (int(floor(coordinates[0]/self.tilewidth)),
                 int(floor(coordinates[1]/self.tileheight)))
+	if retval[0] >= self.numColumns or retval[1] >= self.numRows:
+		return (-1,-1)
+	return retval
+
+    """
+    Get the x and y coords of the pixel associated with the
+    given tile coordinates.
+    """
+    def getPixelCoordinates(self, coordinates):
+        return (coordinates[0]*self.tilewidth,
+                (coordinates[1]*self.tileheight))
+
+
+    """
+    Get the row and column number of the tile associated with the
+    given coordinates.
+    """
+    def getTile(self, coordinates):
+        return self.tiles[coordinates[0]][coordinates[1]]
 
     """
     Determine if the given tile coordinates (row and column number) are valid.

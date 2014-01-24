@@ -49,7 +49,7 @@ class UserInterface:
                                       True, FONT_COLOR, FONT_BACKGROUND)
         self.resources = self.font.render("Resources: " + str(gamedata.resources),
                                           True, FONT_COLOR, FONT_BACKGROUND)
-        self.defeat = self.font.render("You have been defeated!", True,
+        self.defeat = self.font.render("Oops! Looks like the ants have ruined your picnic!", True,
                                        FONT_COLOR, FONT_BACKGROUND)
 
     def draw(self, surface):
