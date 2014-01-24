@@ -1,5 +1,5 @@
 """
-enemy.py - The most basic enemy in the game.
+enemybase.py - The most base enemy class
 """
 
 import pygame
@@ -17,7 +17,15 @@ DIRECTION_EAST = 3
 DIRECTION_WEST = 4
 DIRECTION_NONE = 5
 
-class Enemy:
+DIRECTION_MATRIX = {
+                    DIRECTION_NORTH: (0, 1),
+                    DIRECTION_SOUTH: (0, -1),
+                    DIRECTION_EAST: (1, 0),
+                    DIRECTION_WEST: (-1, 0),
+                    DIRECTION_NONE: (0, 0)
+                    }
+
+class EnemyBase:
 
     """
     Set to true if the images have been initialized already.
@@ -38,21 +46,21 @@ class Enemy:
     This also adds the enemy's sprite to the given sprite group.
     """
     def __init__(self, x, y, group, size):
-        if(not Enemy.initialized): # Load the images
-            Enemy.up_image = pygame.image.load(os.path.join("images", "enemy_up.png"))
-            Enemy.up_image = pygame.transform.scale(Enemy.up_image, size)
-            Enemy.down_image = pygame.image.load(os.path.join("images", "enemy_down.png"))
-            Enemy.down_image = pygame.transform.scale(Enemy.down_image, size)
-            Enemy.left_image = pygame.image.load(os.path.join("images", "enemy_left.png"))
-            Enemy.left_image = pygame.transform.scale(Enemy.left_image, size)
-            Enemy.right_image = pygame.image.load(os.path.join("images", "enemy_right.png"))
-            Enemy.right_image = pygame.transform.scale(Enemy.right_image, size)
-            Enemy.initialized = True
+        if(not self.initialized): # Load the images
+            self.up_image = pygame.image.load(os.path.join("images", "enemy_up.png"))
+            self.up_image = pygame.transform.scale(self.up_image, size)
+            self.down_image = pygame.image.load(os.path.join("images", "enemy_down.png"))
+            self.down_image = pygame.transform.scale(self.down_image, size)
+            self.left_image = pygame.image.load(os.path.join("images", "enemy_left.png"))
+            self.left_image = pygame.transform.scale(self.left_image, size)
+            self.right_image = pygame.image.load(os.path.join("images", "enemy_right.png"))
+            self.right_image = pygame.transform.scale(self.right_image, size)
+            self.initialized = True
         self.health = DEFAULT_HEALTH
         self.speed = DEFAULT_SPEED
         self.sprite = pygame.sprite.Sprite()
         self.direction = DIRECTION_NONE
-        self.sprite.image = Enemy.down_image
+        self.sprite.image = self.down_image
         self.size = size
         self.sprite.rect = pygame.Rect(x, y, size[0], size[1])
         group.add(self.sprite)
@@ -69,16 +77,16 @@ class Enemy:
         # Update depending on the current direction
         if(self.direction == DIRECTION_NORTH):
             deltaY = -self.speed*time_elapsed # Go up the screen
-            self.sprite.image = Enemy.up_image
+            self.sprite.image = self.up_image
         elif(self.direction == DIRECTION_SOUTH):
             deltaY = self.speed*time_elapsed
-            self.sprite.image = Enemy.down_image
+            self.sprite.image = self.down_image
         elif(self.direction == DIRECTION_WEST):
             deltaX =-self.speed*time_elapsed
-            self.sprite.image = Enemy.left_image
+            self.sprite.image = self.left_image
         elif(self.direction == DIRECTION_EAST):
             deltaX = self.speed*time_elapsed
-            self.sprite.image = Enemy.right_image
+            self.sprite.image = self.right_image
         # If the direction is NONE, do nothing
 
         # Update the coordinates and rectangle
@@ -98,7 +106,7 @@ class Enemy:
         tile = mapdata.tiles[tile_coord[0]][tile_coord[1]]
         if(self.direction == DIRECTION_NONE):
             return True # Always try to move!
-        elif(tile.type == maptile.PLOT): # If we've gone off the path, we need to adjust
+        elif(tile.enemy_type == maptile.PLOT): # If we've gone off the path, we need to adjust
             return True
         elif(self.direction == DIRECTION_NORTH):
             # Find the tile below this one
@@ -138,7 +146,7 @@ class Enemy:
         while(not tilequeue.empty()):
             tile = tilequeue.get()
             tile.visited = True
-            if(tile.type == maptile.DESTINATION):
+            if(tile.enemy_type == maptile.DESTINATION):
                 # Go backwards until we hit the tile before the start
                 while(tile.parent != None and tile.parent != start_tile):
                     tile = tile.parent
@@ -170,7 +178,7 @@ class Enemy:
         if(x >= 0 and x < mapdata.numColumns and y >= 0 and y < mapdata.numRows):
             tile = mapdata.tiles[x][y]
             # If this tile hasn't been visited yet, and it's not a plot, add it
-            if(not tile.visited and tile.type != maptile.PLOT):
+            if(not tile.visited and tile.enemy_type != maptile.PLOT):
                 # Update the parent
                 tile.parent = parent
                 queue.put(tile)
@@ -230,7 +238,7 @@ class Enemy:
            or coordinates[1] >= mapsize[1]):
             return False        
         tile_number = mapdata.getTileCoordinates(coordinates)
-        if(mapdata.tiles[tile_number[0]][tile_number[1]].type == maptile.DESTINATION):
+        if(mapdata.tiles[tile_number[0]][tile_number[1]].enemy_type == maptile.DESTINATION):
             return True
         else:
             return False

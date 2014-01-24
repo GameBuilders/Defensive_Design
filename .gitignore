@@ -1,0 +1,31 @@
+# Python shit
+*.pyc
+*.pyo
+
+# eclipse stuff
+.project
+.pydevproject
+
+
+# Sublime Text crap
+*.sublime-*
+
+# Vim crap
+*.swp
+
+# Other crap
+*~
+
+
+# virtualenv
+venv/
+
+
+# Dotcloud stuff
+.dotcloud
+dotcloudconf.py
+
+
+# Other bullshit
+Thumbs.db
+DS_Store
