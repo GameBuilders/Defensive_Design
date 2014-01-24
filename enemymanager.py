@@ -69,19 +69,20 @@ class EnemyManager:
         self.last_wave_time = pygame.time.get_ticks()
         self.last_update_time = pygame.time.get_ticks()
         self.size = size
+        self.prev_spawn_time = pygame.time.get_ticks()
         
 
     """
     Updates the enemies and schedules waves, if necessary. This returns the number
     of enemies that have hit the destination.
     """
-    def update(self, mapdata):
+    def update(self, mapdata, dt=0.0):
         retval = 0
         # Update the enemies
         for curr in EnemyManager.enemies:
-            curr.update(pygame.time.get_ticks()-self.last_update_time, mapdata)
+            curr.update(dt - self.last_update_time, mapdata)
             if(curr.dead() or curr.offscreen(mapdata)):
-                EnemyManager.enemies.remove(enemy)
+                EnemyManager.enemies.remove(curr)
                 curr.sprite.kill() # Remove the sprite from the sprite group
             if(curr.atDestination(mapdata)):
                 EnemyManager.enemies.remove(curr)
@@ -91,7 +92,10 @@ class EnemyManager:
         current_time = pygame.time.get_ticks()
         # Spawn enemies that need to be spawned
         spawning = True
-        while(spawning and not EnemyManager.enemy_queue.empty()):
+        if (spawning and current_time - self.prev_spawn_time >= 1000.0 and \
+                not EnemyManager.enemy_queue.empty()):
+            spawning = False
+            self.prev_spawn_time = current_time
             current_enemy = EnemyManager.enemy_queue.get()
             if(current_enemy[0] > current_time): # Then we don't need to spawn yet
                 EnemyManager.enemy_queue.put(current_enemy)
@@ -100,6 +104,7 @@ class EnemyManager:
                 EnemyManager.enemies.append(current_enemy[1])
 
         
+        """
         # If enough time has passed, and we're not spawning a wave, spawn a wave
         if(current_time - EnemyManager.last_wave_time >= EnemyManager.wave_interval):
             # Spawn a wave!
@@ -107,11 +112,12 @@ class EnemyManager:
             size = mapdata.getTileSize()
             EnemyManager.last_wave_time = current_time
             for index in range(0, EnemyManager.basic_enemies):
-                new_enemy = enemy.Enemy(start[0], start[1], EnemyManager.spritegroup, size)
+                new_enemy = enemy.CrowEnemy(start[0], start[1], EnemyManager.spritegroup, size)
                 scheduled_time = index*EnemyManager.spawn_interval+current_time
                 EnemyManager.enemy_queue.put((scheduled_time, new_enemy))
             # Increase the difficulty!
             #EnemyManager.basic_enemies = 0
+            #"""
         return retval
 
     """

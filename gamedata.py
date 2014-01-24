@@ -18,4 +18,5 @@ class GameData:
         self.score = 0
         self.resources = STARTING_RESOURCES
         self.lives = STARTING_LIVES
+        self.paused = False
         

@@ -17,12 +17,18 @@ DIRECTION_EAST = 3
 DIRECTION_WEST = 4
 DIRECTION_NONE = 5
 
-class Enemy:
+(EN_BIRD,
+EN_CROW,
+EN_FINCH) = range(3)
+
+class Enemy(object):
 
     """
     Set to true if the images have been initialized already.
     """
     initialized = False
+    
+    money = 1
 
     """
     The images to use when going the given direction. These are kept as
@@ -39,23 +45,16 @@ class Enemy:
     """
     def __init__(self, x, y, group, size):
         if(not Enemy.initialized): # Load the images
-            Enemy.up_image = pygame.image.load(os.path.join("images", "enemy_up.png"))
+            Enemy.up_image = pygame.image.load(os.path.join("images", "enemies", "crow.png"))
             Enemy.up_image = pygame.transform.scale(Enemy.up_image, size)
-            Enemy.down_image = pygame.image.load(os.path.join("images", "enemy_down.png"))
-            Enemy.down_image = pygame.transform.scale(Enemy.down_image, size)
-            Enemy.left_image = pygame.image.load(os.path.join("images", "enemy_left.png"))
-            Enemy.left_image = pygame.transform.scale(Enemy.left_image, size)
-            Enemy.right_image = pygame.image.load(os.path.join("images", "enemy_right.png"))
-            Enemy.right_image = pygame.transform.scale(Enemy.right_image, size)
-            Enemy.initialized = True
+            Enemy.down_image = pygame.transform.rotozoom(Enemy.up_image, 180.0, 1.0)
+            Enemy.left_image = pygame.transform.rotozoom(Enemy.up_image, 90.0, 1.0)
+            Enemy.right_image = pygame.transform.rotozoom(Enemy.up_image, 270.0, 1.0)
         self.health = DEFAULT_HEALTH
         self.speed = DEFAULT_SPEED
-        self.sprite = pygame.sprite.Sprite()
-        self.direction = DIRECTION_NONE
-        self.sprite.image = Enemy.down_image
         self.size = size
-        self.sprite.rect = pygame.Rect(x, y, size[0], size[1])
-        group.add(self.sprite)
+        self.direction = DIRECTION_NONE
+        self.sprite = pygame.sprite.Sprite()
 
     """
     Update the sprite. The time_elapsed parameter is how much time
@@ -104,7 +103,7 @@ class Enemy:
             # Find the tile below this one
             if(mapdata.validCoordinates(tile_coord[0], tile_coord[1]+1)):
                 tile = mapdata.tiles[tile_coord[0]][tile_coord[1]+1]
-                if(coordinates[1]+self.size[1] >= tile.y*mapdata.tileheight):
+                if(coordinates[1]+self.size[1] <= tile.y*mapdata.tileheight):
                     return True
             return False
         elif(self.direction == DIRECTION_SOUTH):
@@ -170,7 +169,9 @@ class Enemy:
         if(x >= 0 and x < mapdata.numColumns and y >= 0 and y < mapdata.numRows):
             tile = mapdata.tiles[x][y]
             # If this tile hasn't been visited yet, and it's not a plot, add it
-            if(not tile.visited and tile.type != maptile.PLOT):
+            # Any type greater than 100 refers to a tower.
+            # Don't allow walking over it.
+            if not tile.visited and tile.type < 100 and tile.type not in [maptile.PLOT]:
                 # Update the parent
                 tile.parent = parent
                 queue.put(tile)
@@ -234,6 +235,99 @@ class Enemy:
             return True
         else:
             return False
+
+class BirdEnemy(Enemy):
+    initialized = False
+    money = 5
+    
+    def __init__(my, x, y, group, size):
+        super(BirdEnemy, my).__init__(x, y, group, size)
+        if not BirdEnemy.initialized:
+            BirdEnemy.up_image = pygame.image.load(os.path.join("images", "enemies", "enemy_up.png"))
+            BirdEnemy.up_image = pygame.transform.scale(BirdEnemy.up_image, size)
+            BirdEnemy.down_image = pygame.image.load(os.path.join("images", "enemies", "enemy_down.png"))
+            BirdEnemy.down_image = pygame.transform.scale(BirdEnemy.down_image, size)
+            BirdEnemy.left_image = pygame.image.load(os.path.join("images", "enemies", "enemy_left.png"))
+            BirdEnemy.left_image = pygame.transform.scale(BirdEnemy.left_image, size)
+            BirdEnemy.right_image = pygame.image.load(os.path.join("images", "enemies", "enemy_right.png"))
+            BirdEnemy.right_image = pygame.transform.scale(BirdEnemy.right_image, size)
+        my.health = 100
+        my.speed = 0.175
+        my.sprite.image = BirdEnemy.down_image
+        my.sprite.rect = pygame.Rect(x, y, size[0], size[1])
+        group.add(my.sprite)
+
+    def update(self, time_elapsed, mapdata):
+       super(BirdEnemy, self).update(time_elapsed, mapdata)
+       # Update depending on the current direction
+       if(self.direction == DIRECTION_NORTH):
+           self.sprite.image = BirdEnemy.up_image
+       elif(self.direction == DIRECTION_SOUTH):
+           self.sprite.image = BirdEnemy.down_image
+       elif(self.direction == DIRECTION_WEST):
+           self.sprite.image = BirdEnemy.left_image
+       elif(self.direction == DIRECTION_EAST):
+           self.sprite.image = BirdEnemy.right_image
+
+class CrowEnemy(Enemy):
+    initialized = False
+    money = 15
+    
+    def __init__(my, x, y, group, size):
+        super(CrowEnemy, my).__init__(x, y, group, size)
+        if not CrowEnemy.initialized:
+            CrowEnemy.up_image = pygame.image.load(os.path.join("images", "enemies", "crow.png"))
+            CrowEnemy.up_image = pygame.transform.scale(CrowEnemy.up_image, size)
+            CrowEnemy.down_image = pygame.transform.rotozoom(CrowEnemy.up_image, 180.0, 1.0)
+            CrowEnemy.left_image = pygame.transform.rotozoom(CrowEnemy.up_image, 90.0, 1.0)
+            CrowEnemy.right_image = pygame.transform.rotozoom(CrowEnemy.up_image, 270.0, 1.0)
+        my.health = 200
+        my.speed = 0.15
+        my.sprite.image = CrowEnemy.down_image
+        my.sprite.rect = pygame.Rect(x, y, size[0], size[1])
+        group.add(my.sprite)
+
+    def update(self, time_elapsed, mapdata):
+        super(CrowEnemy, self).update(time_elapsed, mapdata)
+        # Update depending on the current direction
+        if(self.direction == DIRECTION_NORTH):
+            self.sprite.image = CrowEnemy.up_image
+        elif(self.direction == DIRECTION_SOUTH):
+            self.sprite.image = CrowEnemy.down_image
+        elif(self.direction == DIRECTION_WEST):
+            self.sprite.image = CrowEnemy.left_image
+        elif(self.direction == DIRECTION_EAST):
+            self.sprite.image = CrowEnemy.right_image
+
+class FinchEnemy(Enemy):
+    initialized = False
+    money = 35
+    
+    def __init__(my, x, y, group, size):
+        super(FinchEnemy, my).__init__(x, y, group, size)
+        if not FinchEnemy.initialized:
+            FinchEnemy.up_image = pygame.image.load(os.path.join("images", "enemies", "finch.png"))
+            FinchEnemy.up_image = pygame.transform.scale(FinchEnemy.up_image, size)
+            FinchEnemy.down_image = pygame.transform.rotozoom(FinchEnemy.up_image, 180.0, 1.0)
+            FinchEnemy.left_image = pygame.transform.rotozoom(FinchEnemy.up_image, 90.0, 1.0)
+            FinchEnemy.right_image = pygame.transform.rotozoom(FinchEnemy.up_image, 270.0, 1.0)
+        my.health = 450
+        my.speed = 0.4
+        my.sprite.image = FinchEnemy.down_image
+        my.sprite.rect = pygame.Rect(x, y, size[0], size[1])
+        group.add(my.sprite)
+
+    def update(self, time_elapsed, mapdata):
+        super(FinchEnemy, self).update(time_elapsed, mapdata)
+        # Update depending on the current direction
+        if(self.direction == DIRECTION_NORTH):
+            self.sprite.image = FinchEnemy.up_image
+        elif(self.direction == DIRECTION_SOUTH):
+            self.sprite.image = FinchEnemy.down_image
+        elif(self.direction == DIRECTION_WEST):
+            self.sprite.image = FinchEnemy.left_image
+        elif(self.direction == DIRECTION_EAST):
+            self.sprite.image = FinchEnemy.right_image
 
 # A little trick so we can run the game from here in IDLE
 if __name__ == '__main__':
