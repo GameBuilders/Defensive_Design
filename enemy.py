@@ -170,7 +170,7 @@ class Enemy:
         if(x >= 0 and x < mapdata.numColumns and y >= 0 and y < mapdata.numRows):
             tile = mapdata.tiles[x][y]
             # If this tile hasn't been visited yet, and it's not a plot, add it
-            if(not tile.visited and tile.type != maptile.PLOT):
+            if(not tile.visited and tile.type != maptile.PLOT  and tile.type != maptile.TOWER):
                 # Update the parent
                 tile.parent = parent
                 queue.put(tile)

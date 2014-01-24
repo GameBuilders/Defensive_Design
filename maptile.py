@@ -5,6 +5,7 @@ tiles. Tiles can hold an enemy or a tower.
 
 import pygame
 import os
+from tower import tower
 
 """
 Constants used to define the type of map tile this is.
@@ -13,6 +14,7 @@ PLOT = 0 # A tower can be built on this tile, and no enemy can access it
 PATH = 1 # Enemies can access this tile, and no tower can be built on it
 START = 2 # Enemies spawn from this tile, and nothing can be present on it
 DESTINATION = 3 # Enemies go towards this tile, and nothing can be present on it
+TOWER = 4 # Tower
 
 class Tile:
 
@@ -32,6 +34,8 @@ class Tile:
             self.type = START
         elif(character == "D"):
              self.type = DESTINATION
+    	elif(character == "T"):
+    	    self.type = TOWER
         else:
             self.type = PLOT # By default we can build towers on it
 
@@ -48,6 +52,8 @@ class Tile:
                 name = "start.png"
             elif(self.type == DESTINATION):
                 name = "end.png"
+            elif(self.type == TOWER):
+                name = "plot.png"
             else: # Buildable tile by default
                 name = "plot.png"
             # The os.path.join() function is used for cross platform compatibility
